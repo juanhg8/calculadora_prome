@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Promedios</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label { display: block; margin-top: 8px; }
+        .materia { margin-bottom: 6px; }
+        #resultado { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Calculadora de Promedios</h1>
+    <p>Nota mínima para pasar: <strong>6.0</strong></p>
+
+    <label>Nombre del estudiante:
+        <input type="text" id="nombre">
+    </label>
+    <label>Cantidad de materias:
+        <input type="number" id="cantidad" min="1">
+        <button id="generar">Generar campos</button>
+    </label>
+
+    <form id="form-materias"></form>
+    <button id="calcular" style="display:none;">Calcular promedio</button>
+
+    <div id="resultado" style="display:none;"></div>
+
+    <script>
+        const notaMin = 6.0;
+        const generarBtn = document.getElementById('generar');
+        const calcularBtn = document.getElementById('calcular');
+        const formMaterias = document.getElementById('form-materias');
+        const resultadoDiv = document.getElementById('resultado');
+
+        generarBtn.addEventListener('click', () => {
+            formMaterias.innerHTML = '';
+            resultadoDiv.style.display = 'none';
+            const cantidad = parseInt(document.getElementById('cantidad').value, 10);
+            if (isNaN(cantidad) || cantidad <= 0) {
+                alert('Ingrese un número entero positivo de materias.');
+                return;
+            }
+            for (let i = 0; i < cantidad; i++) {
+                const cont = document.createElement('div');
+                cont.className = 'materia';
+
+                const lab = document.createElement('label');
+                lab.textContent = `Materia #${i+1}: `;
+                const inputMat = document.createElement('input');
+                inputMat.type = 'text';
+                inputMat.required = true;
+                lab.appendChild(inputMat);
+
+                const labNota = document.createElement('label');
+                labNota.textContent = ' Nota: ';
+                const inputNota = document.createElement('input');
+                inputNota.type = 'number';
+                inputNota.step = '0.01';
+                inputNota.min = '0';
+                inputNota.max = '10';
+                inputNota.required = true;
+                labNota.appendChild(inputNota);
+
+                cont.appendChild(lab);
+                cont.appendChild(labNota);
+                formMaterias.appendChild(cont);
+            }
+            calcularBtn.style.display = 'inline';
+        });
+
+        calcularBtn.addEventListener('click', () => {
+            const nombre = document.getElementById('nombre').value.trim();
+            if (!nombre) {
+                alert('Ingrese el nombre del estudiante.');
+                return;
+            }
+            const inputs = formMaterias.getElementsByTagName('input');
+            let total = 0;
+            let cantidad = 0;
+            let detalle = '';
+            for (let i = 0; i < inputs.length; i += 2) {
+                const mat = inputs[i].value.trim();
+                const nota = parseFloat(inputs[i+1].value);
+                if (!mat || isNaN(nota) || nota < 0 || nota > 10) {
+                    alert('Revise los datos de las materias.');
+                    return;
+                }
+                detalle += `<div>${mat}: ${nota.toFixed(2)}</div>`;
+                total += nota;
+                cantidad += 1;
+            }
+            const promedio = total / cantidad;
+            const estado = promedio >= notaMin ? 'APROBADO' : 'REPROBADO';
+            resultadoDiv.innerHTML = `
+                <h2>Resultado</h2>
+                <div>Estudiante: ${nombre}</div>
+                ${detalle}
+                <div>Promedio general: ${promedio.toFixed(2)}</div>
+                <div>Estado: ${estado}</div>
+            `;
+            resultadoDiv.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
