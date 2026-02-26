@@ -12,7 +12,7 @@ Uso:
 def main():
     print("Calculadora de promedios\n")
     print("Nota mínima para pasar: 6.0\n")
-
+    print("modificacion")
     while True:  # repetir hasta que el usuario decida salir
         nombre = input("Ingrese el nombre del estudiante: ")
 
